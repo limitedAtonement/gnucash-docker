@@ -1,24 +1,20 @@
 #!/bin/bash
 
+#src is the location of the repository to use for building gnucash. It will
+# be mounted within the docker container readonly.
+src=/home/lawsa/source/gnucash
+
 # build the image
 docker build -t gnucash-build .
 # to remove this image, use docker images; docker rmi;
 #   There may be containers running an image you'd like to delete, use
 #    docker ps -a; to see containers, and docker rm; to remove them (docker stop; to stop them).
 
-# create a container from this image (remember, images are immutable).
-#docker create gnucash-build
-
 # Run this container attached (once inside, execute:
 #   /run 'git clone /repos/gnucash-origin /repos/gnucash' 'cd /repos/gnucash' 'git checkout timespec' 'git branch'
 # )
 #docker run -itv /home/lawsa/source/gnucash:/repos/gnucash-origin:ro gnucash-build bash -i
 
-docker run -itv /home/lawsa/source/gnucash:/repos/gnucash-origin:ro gnucash-build  \
+# Run this container headless:
+docker run -itv "$src":/repos/gnucash-origin:ro gnucash-build  \
    /run 'git clone /repos/gnucash-origin /repos/gnucash' 'cd /repos/gnucash' 'git checkout master' 'git branch -a'
-
-# Run this container headless
-#docker run -v /home/lawsa/source/gnucash:/repos/gnucash-origin:ro gnucash-build
-#if [[ "$#" -gt 0 ]]; then
-    #if [[ "$1" == "delete" ]]; then
-        #docker 
