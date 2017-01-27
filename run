@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [[ "$#" -lt 1 ]]; then
+    echo "You must send a statement that will create a repository at /repos/gnucash"
+    echo " If you have mounted a source readonly volume at /repos/gnucash-origin,"
+    echo " something like   'git clone gnucash/origin gnucash;"
+    echo " (commands are run from /repos)";
+    echo " or  'git clone https://github.com/gnucash/gnucash /repos/gnucash'";
+    exit 1;
+fi
+
+if [[ ! -d /repos ]]; then
+    mkdir /repos;
+fi
+
+cd /repos;
+
+for command in "$@"; do
+    eval "$command"
+done;
+
+cd /repos/gnucash;
+mkdir build; cd build;
+../autogen.sh && ../configure;
+make -j 3
+TZ="America/Los_Angeles" make check
